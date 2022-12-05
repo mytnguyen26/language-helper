@@ -3,10 +3,12 @@ import torch.nn as nn
 from torch.autograd import Variable
 from torch.optim import Adam
 from torch import FloatTensor, randn, zeros
+from torch.utils.data import random_split
+import random
 
 class Training:
-    def __init__(self, model, criterion, training_set, encode, \
-                n_iterations: int, learning_rate: float, optimizer = None):
+    def __init__(self, model, criterion, encode, \
+                n_iterations: int, learning_rate: float, optimizer = None, training_set = None):
         
         self.model = model
         self.criterion = criterion
@@ -15,6 +17,7 @@ class Training:
         self.n_iterations = n_iterations
         self.training_result: List[float] = []
         self.training_set: List[List[str]] = training_set
+        self.validation_set: List[List[str]] = None
         self.encode = encode
 
     def _train_each_sentence(self, iter):
@@ -23,7 +26,8 @@ class Training:
         """
         hidden = self.model.init_hidden()
         total_loss = 0
-        sentence = self.training_set[iter]
+
+        sentence = random.choice(self.training_set)
 
         # wrap tensor in Variable
         x_tensor, y_tensor = self.encode.formulate_target(sentence)
@@ -73,6 +77,12 @@ class Training:
         
         return output, total_loss/x_tensor.size()[0]
 
+    def split_train_test(self, training_size):
+        self.training_set, self.validation_set = random_split(self.training_set, training_size)
+
+    def early_stopping(self):
+        pass
+    
     def run(self):
         """
         TODO
