@@ -16,7 +16,7 @@ from typing import List, Dict, Any, Tuple
 
 class Processing:
         
-    def __init__(self, data_domain: str, data_dir: str = "../dataset/", delimiter: str = ","):
+    def __init__(self, data_domain: str, data_dir: str = "./dataset/", delimiter: str = ","):
         nltk.download('punkt')
         path: str = os.path.join(data_dir,data_domain)
         self.delimiter: str = delimiter
@@ -25,7 +25,7 @@ class Processing:
             if file.endswith(("txt", "csv")):
                 self.file_path.append(os.path.join(path,file))
         self.list_of_tokens: List[List[str]] = None
-        self.vocabulary_mapping: Dict[str, str] = None        
+        self.vocabulary_mapping: Dict[int, str] = None        
 
     def _create_vocab_mapping(self, list_of_tokens) -> Tuple[Dict[str,str], Dict[str, int]]:
         """
@@ -81,8 +81,15 @@ class Processing:
         dataframe = pd.DataFrame()
         for file in self.file_path:
             with open(file, "r") as file:
+                print(f"Loading...{file}")
                 dataframe_stg = pd.read_csv(file, delimiter=self.delimiter)
+
+                print(f"{dataframe_stg.shape[0]} rows and {dataframe_stg.shape[1]} columns appended")
                 dataframe = pd.concat([dataframe, dataframe_stg])
+
+        print(f"Completed: {dataframe.shape[0]} rows and {dataframe.shape[1]} columns loaded")
+        print(f"Columns {dataframe.columns}")
+        return dataframe
 
 
     def prepare(self, dataframe: DataFrame, column: str) -> None:
@@ -97,7 +104,7 @@ class Processing:
         TODO
         """
         column = column.lower()
-        dataframe.columes = [col.lower() for col in dataframe.columns]
+        dataframe.columns = [col.lower() for col in dataframe.columns]
         # lower case all values
         dataframe[column] = dataframe[column].apply(lambda x: str(x).lower())
 
@@ -109,6 +116,6 @@ class Processing:
 
         # save list of tokens to the instance
         self.list_of_tokens = self._create_tokens(dataframe, column)
-        self.vocabulary_mapping = self._create_vocab_mapping(self.list_of_tokens)
+        self.vocabulary_mapping, _ = self._create_vocab_mapping(self.list_of_tokens)
         
 

@@ -3,11 +3,9 @@ import torch.nn as nn
 from torch.autograd import Variable
 from torch.optim import Adam
 from torch import FloatTensor, randn, zeros
-from encode import EncodeUtility
-
 
 class Training:
-    def __init__(self, model, criterion, training_set, \
+    def __init__(self, model, criterion, training_set, encode, \
                 n_iterations: int, learning_rate: float, optimizer = None):
         
         self.model = model
@@ -15,18 +13,20 @@ class Training:
         self.learning_rate = learning_rate
         self.optimizer = optimizer
         self.n_iterations = n_iterations
-        self.training_result: List[float]
+        self.training_result: List[float] = []
         self.training_set: List[List[str]] = training_set
+        self.encode = encode
 
     def _train_each_sentence(self, iter):
         """
         TODO
         """
+        hidden = self.model.init_hidden()
         total_loss = 0
         sentence = self.training_set[iter]
 
         # wrap tensor in Variable
-        x_tensor, y_tensor = EncodeUtility.formulate_target(sentence)
+        x_tensor, y_tensor = self.encode.formulate_target(sentence)
         x_tensor_wrap = Variable(x_tensor)
         y_tensor_wrap = Variable(y_tensor)
 
