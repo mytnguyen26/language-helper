@@ -1,6 +1,10 @@
 from typing import List
+import torch.nn as nn
+from torch.autograd import Variable
+from torch.optim import Adam
+from torch import FloatTensor, randn, zeros
 from encode import EncodeUtility
-from model import *
+
 
 class Training:
     def __init__(self, model, criterion, training_set, \
@@ -9,6 +13,7 @@ class Training:
         self.model = model
         self.criterion = criterion
         self.learning_rate = learning_rate
+        self.optimizer = optimizer
         self.n_iterations = n_iterations
         self.training_result: List[float]
         self.training_set: List[List[str]] = training_set
@@ -28,7 +33,11 @@ class Training:
         # iterate thru token in each sentence
         for index in range(x_tensor_wrap.size()[0]):
             # zero gradient
-            self.model.zero_grad()
+            if self.optimizer != None:
+                self.optimizer.zero_grad()
+            else:
+                self.model.zero_grad()
+                
             # optimizer.zero_grad()
             output, hidden = self.model(x_tensor_wrap[index], hidden)
 
@@ -46,11 +55,14 @@ class Training:
             # are deleted when they are not needed anymore. Hence if you try to call .backward() again,
             # the intermediary results don’t exist and the backward pass cannot be performed (and you get the error you see).
             # You can call .backward(retain_graph=True) to make a backward pass that will not delete intermediary results
-
-            # backpropagate
             loss.backward(retain_graph=True)
             
-            nn.utils.clip_grad_norm_(self.model.parameters(), 1)
+            # backpropagate
+            if self.optimizer != None:
+                self.optimizer.step()
+            else:
+                
+                nn.utils.clip_grad_norm_(self.model.parameters(), 1)
 
             # update weights
             for p in self.model.parameters():
