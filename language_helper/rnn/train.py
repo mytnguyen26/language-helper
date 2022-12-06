@@ -1,4 +1,5 @@
 from typing import List
+from torch import save, load
 import torch.nn as nn
 from torch.autograd import Variable
 from torch.optim import Adam
@@ -81,7 +82,37 @@ class Training:
         self.training_set, self.validation_set = random_split(self.training_set, training_size)
 
     def early_stopping(self):
+        """
+        Ending model training and output to a pickle file if loss
+        stop reducing
+        """
         pass
+
+    def save_checkpoint(self, iter, loss):
+        """
+        Add checkpoint for the model. Output model to a pickle file
+        """
+        if self.optimizer != None:
+            optimizer_state_dict = self.optimizer.state_dict()
+        save({
+            'epoch': iter,
+            'model_state_dict': self.model.state_dict(),
+            'optimizer_state_dict': optimizer_state_dict,
+            'loss': loss,
+        }, "./model_checkpoints/model.pt")
+
+    def load_checkpoint(self):
+        """
+        Load a model checkpoint and update model state
+        with state dict saved in checkpoint
+        """
+        checkpoint = load("./model_checkpoints/model.pt")
+        self.model.load_state_dict(checkpoint['model_state_dict'])
+        if self.optimizer != None:
+            self.optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+            iter = checkpoint['epoch']
+            loss = checkpoint['loss']
+        return iter, loss
     
     def run(self):
         """

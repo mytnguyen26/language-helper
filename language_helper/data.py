@@ -91,7 +91,6 @@ class Processing:
         print(f"Columns {dataframe.columns}")
         return dataframe
 
-
     def prepare(self, dataframe: DataFrame, column: str) -> None:
         """
         Turn dataframe column into List of tokens

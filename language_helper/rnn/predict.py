@@ -7,14 +7,14 @@ class Predict:
 
     @staticmethod
     def predict(input_sentence, rnn, encode, hidden_size, vocabulary_mapping, output_length=None):
-        nltk.word_tokenize(input_sentence)
+        input_sentence = nltk.word_tokenize(input_sentence)
         
         predicted_str = []
         rnn.eval()
         hidden = rnn.init_hidden()
-        for i in range(output_length+1):     
-            hidden = rnn.init_hidden()   
-            x_input = encode.sentence_to_tensor(input_sentence)
+        for i in range(output_length+1):  
+            
+            x_input = encode.sentence_to_tensor(input_sentence, len(vocabulary_mapping))
             x_input = Variable(x_input)
             
             hidden = Variable(torch.zeros(1, hidden_size))
