@@ -22,8 +22,11 @@ def test_make_models(markov):
     From a list of input string
     generate n_grams model
     """
-    input = ["hello how are you",
-            "I'm good how are you"]
+    input = [["hello", "how", "are", "you"],
+            ["Im", "good", "how", "are", "you"]]
+
+    markov.make_model(input, 3)
+    assert len(markov.ngrams_model) == 5
 
 
 def test_predict_next_word_case_a(markov):

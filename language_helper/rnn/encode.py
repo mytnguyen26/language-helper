@@ -6,7 +6,7 @@ class EncodeUtility:
     def __init__(self, vocabulary_mapping = None) -> None:
         self.vocabulary_mapping = vocabulary_mapping
     
-    def sentence_to_tensor(self, tokens: List[str], vocab_size: int):
+    def sentence_to_tensor(self, tokens: List[List[str]], vocab_size: int):
         """
         Create a tensor for each sentence.
 
@@ -27,15 +27,17 @@ class EncodeUtility:
         return tensor
 
     
-    def formulate_target(self, sentences: List[str]):
+    def formulate_target(self, sentences: List[List[str]]):
         """
-        For example:
-        string: This is a test
+        Create input and target tensor for each list_of_tokens
+        Args:
+            - sentences (List[List[str]]): list of tokens extracted from
+            a string sentence
+            For example: [["hello", "how", "are", "you"]]
 
-        embedded tensor:
-        This = [[[]]]
-
-        target: is
+        Returns:
+            - x_tensor: a tensor object of size (length of sentence -1 , 1, size of vocab)
+            - y_tensor: a tensor object of size (length of sentence -1, 1, size of vocab)
         """
         orig_size = len(sentences)
         x_sentence = sentences[:-1]
