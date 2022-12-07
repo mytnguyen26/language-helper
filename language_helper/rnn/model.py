@@ -43,28 +43,41 @@ class RNN(nn.Module):
         return Variable(torch.zeros(1, self.hidden_size))
 
 class LSTM(nn.Module):
-    def __init__(self, input_size, hidden_size, output_size):
-        super(RNN, self).__init__()
-
+    def __init__(self, input_size, hidden_size, layer_size, output_size):
+        super(LSTM, self).__init__()
+        self.input_size = input_size
         self.hidden_size = hidden_size
+        self.layer_size = layer_size
+        self.output_size = output_size
 
-        self.lstm_layers = nn.LSTM(input_size = input_size + hidden_size, 
+        # define LSTM layers using pytorch LSTM module
+        self.lstm_layers = nn.LSTM(input_size = input_size, 
                             hidden_size = hidden_size, 
-                            num_layers = 1,
+                            num_layers = layer_size,
+                            batch_first=False,
                             dropout = 0.1)
 
-        self.fully_connected = nn.Linear(input_size + hidden_size, output_size)
+        self.fully_connected = nn.Linear(hidden_size, output_size)
         
-        # self.dropout = nn.Dropout(0.1)
-        self.softmax = nn.LogSoftmax()
+        # self.softmax = nn.LogSoftmax()
 
-    def forward(self, input, hidden):
-        combined = torch.cat((input, hidden), 1)
-        output, state = self.lstm(combined, hidden)
+    def forward(self, input, hidden, cell):
+        
+        output, (hidden_state, cell_state) = self.lstm_layers(input, (hidden, cell))
         logits = self.fully_connected(output)
+
+        return logits, (hidden_state, cell_state)
     
     def init_hidden(self):
-        return (Variable(torch.zeros(1, self.hidden_size)), 
-                Variable(torch.zeros(1, self.hidden_size)))
+        """
+        From pytorch documentation:
+        initial hidden state has tensor of shape (D * num_layers}, hidden_size) for
+        unbatched input
+        if bidirectional, D = 2. Otherwise, D = 1
+        """
+        hidden_state = Variable(torch.zeros(self.layer_size, self.hidden_size)).requires_grad_()
+        cell_state = Variable(torch.zeros(self.layer_size, self.hidden_size)).requires_grad_()
+        return (hidden_state, cell_state)
+                
 
 

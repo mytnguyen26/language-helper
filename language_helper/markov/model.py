@@ -121,7 +121,8 @@ class MarkovNgrams:
         for candidate in match_grams:
             next_word = candidate[-1]
             if next_word not in result_hash_map.keys():
-                result_hash_map[next_word] = (1, 1/len(match_grams))
+                result_hash_map[next_word] = [1, 1/len(match_grams)]
+                
             else:
                 result_hash_map[next_word][0] += 1
                 result_hash_map[next_word][1] = result_hash_map[next_word][0]/len(match_grams)
@@ -130,6 +131,7 @@ class MarkovNgrams:
                 p_chosen_word = result_hash_map[next_word][1]
             elif result_hash_map[next_word][1] == p_chosen_word:
                 np.random.choice([chosen_word, next_word])
-            print(next_word)
+
+            self.result_hash_map = result_hash_map
         return (chosen_word, p_chosen_word)
 
