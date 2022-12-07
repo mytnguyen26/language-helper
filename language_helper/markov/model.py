@@ -119,7 +119,6 @@ class MarkovNgrams:
         """
         result_hash_map = {}
         input_token = word_tokenize(input)
-        print(input_token)
         
         match_grams = self.matching_set(input_token)
         chosen_word = ""
@@ -140,6 +139,7 @@ class MarkovNgrams:
             elif result_hash_map[next_word][1] == p_chosen_word:
                 np.random.choice([chosen_word, next_word])
 
-            self.result_hash_map = result_hash_map
+        self.result_hash_map = result_hash_map
+
         return (chosen_word, p_chosen_word)
 
