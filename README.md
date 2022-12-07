@@ -1,5 +1,8 @@
 # Various Natural Language Generation task with Markov Process and Recurrence Neural Network
 
+Author: My Nguyen  
+MET CS664 A1 - Fall 2022 - Artificial Intelligence
+
 ## 1. Setup
 To start developing or using the project:
 
@@ -8,6 +11,8 @@ To start developing or using the project:
 ```
 git clone
 ```
+- create a virtual environment
+
 
 - install dependencies and module
 
