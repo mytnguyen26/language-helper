@@ -26,5 +26,5 @@ class Predict:
             # use top 1 word as next input
             input_sentence = [vocabulary_mapping[int(output.data.topk(1).indices[0][0])]]
             print(f"next input {input_sentence}")
-            predicted_str.append((input_sentence, p[0]))
+            predicted_str.append((input_sentence[0][0], p[0]))
         return predicted_str
