@@ -41,7 +41,7 @@ class MarkovNgrams:
 
         return match_grams
     
-    def make_model(self, batch_sentences: List[str], n_grams: int) -> List[List[str]]:
+    def make_model(self, batch_sentences: List[List[str]], n_grams: int) -> List[List[str]]:
         """
         Go thru set of sentences, break sentences into ngrams.
         Finally return a list of ngrams token.
@@ -77,12 +77,20 @@ class MarkovNgrams:
         """
         ngrams_model = []
         for sentence in batch_sentences:
-            list_ngrams = ngrams(word_tokenize(sentence), n_grams)
+            list_ngrams = ngrams(sentence, n_grams)
             for grams in list_ngrams:
                 ngrams_model.append(grams)
                 print(f"last word should be the next word used for prediction, or target: {grams[n_grams-1]}")
                 print(f"prev words {grams[:n_grams-1]}")
         self.ngrams_model = ngrams_model
+
+    def feedback(self, input):
+        """
+        When the model encounter new sequences (i.e. predict next word returns ''),
+        this phenomenon known as Out of Vocabulary. Use input provided by the human
+        and iteratively add to model
+        """
+        pass
 
     def predict_next_word(self, input: str):
         """

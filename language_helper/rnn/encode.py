@@ -14,7 +14,11 @@ class EncodeUtility:
             - tokens: a sentence splited into token. 
             For example: ["hi", "how", "are", "you", "</s>"]
         Return:
-            - tensor:
+            - tensor: a 3-dimensions array-like object of size
+            [length_of_sentence, 1, vocabulary_size]
+            For example:
+                [[[0, 1, 0]],
+                [[1, 0, 1]]]
         """
         tensor = torch.zeros(len(tokens), 1, vocab_size)
         for sentence, word in enumerate(tokens):

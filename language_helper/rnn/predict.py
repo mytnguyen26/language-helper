@@ -7,6 +7,9 @@ class PredictRNN:
 
     @staticmethod
     def predict(input_sentence, rnn, encode, hidden_size, vocabulary_mapping, output_length=None):
+        """
+        TODO
+        """
         input_sentence = nltk.word_tokenize(input_sentence)
         
         predicted_str = []
@@ -33,18 +36,20 @@ class PredictLSTM:
 
     @staticmethod
     def predict(input_sentence, rnn, encode, hidden_size, vocabulary_mapping, output_length=None):
+        """
+        TODO
+        """
         input_sentence = nltk.word_tokenize(input_sentence)
         
         predicted_str = []
         rnn.eval()
-        hidden = rnn.init_hidden()
+        hidden_init, cell_init = rnn.init_hidden()
         for i in range(output_length+1):  
             
             x_input = encode.sentence_to_tensor(input_sentence, len(vocabulary_mapping))
             x_input = Variable(x_input)
             
-            hidden = Variable(torch.zeros(1, hidden_size))
-            output, (next_hidden, cell) = rnn(x_input[0], hidden)
+            output, (next_hidden, cell) = rnn(x_input[0], hidden_init, cell_init)
 
             # get the token probabilities
             p = torch.nn.functional.softmax(output, dim=1).data
